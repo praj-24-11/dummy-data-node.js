@@ -1,0 +1,13 @@
+# Terraform files
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+
+# AWS credentials (make sure these are stored in GitHub Secrets)
+*.tfvars
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
