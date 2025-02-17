@@ -76,7 +76,7 @@ jobs:
         run: npm install
 
       - name: Run Linting
-        run: npm run lint
+        run: npm run lint -- --fix
 
       - name: Run Static Code Analysis
         run: npm run test
