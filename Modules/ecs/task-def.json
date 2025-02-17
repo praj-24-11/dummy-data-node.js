@@ -1,0 +1,37 @@
+{
+    "family": "dummy-data-api-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::123456789:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::123456789:role/ecsTaskRole",
+    "containerDefinitions": [
+      {
+        "name": "dummy-api-container",
+        "image": "123456789.dkr.ecr.us-east-1.amazonaws.com/dummy-api:latest",
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "hostPort": 3000,
+            "protocol": "tcp"
+          }
+        ],
+        "environment": [
+          {
+            "name": "NODE_ENV",
+            "value": "production"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/dummy-data-api",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        }
+      }
+    ]
+  }
+  
