@@ -1,4 +1,3 @@
-# Create an S3 bucket for access logs
 resource "aws_s3_bucket" "alb_logs" {
   bucket = "alb-logs"
   acl    = "private"
@@ -18,14 +17,13 @@ resource "aws_lb" "api_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.alb_security_group_id]
-  subnets           = var.public_subnet_ids
-
+  subnets            = var.public_subnet_ids
   enable_deletion_protection = false
 
   access_logs {
-    bucket  = aws_s3_bucket.alb_logs.bucket  # Reference the S3 bucket created above
+    bucket  = aws_s3_bucket.alb_logs.bucket
     enabled = true
-    prefix  = "access-logs"  # Optional: specify a prefix for log files in the bucket
+    prefix  = "access-logs"
   }
 
   tags = {
@@ -77,24 +75,24 @@ resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.api_alb.arn
   port              = 80
   protocol          = "HTTP"
-  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+
   default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.blue.arn
+    type = "redirect"
+    redirect {
+      protocol    = "HTTPS"
+      port        = "443"
+      status_code = "HTTP_301"
+    }
   }
 }
 
-resource "aws_lb_listener_rule" "blue" {
-  listener_arn = aws_lb_listener.http.arn
-  priority     = 100
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.api_alb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
-  condition {
-    path_pattern {
-      values = ["/*"]
-    }
-  }
-
-  action {
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
   }
@@ -128,4 +126,3 @@ resource "aws_security_group" "alb_sg" {
     Name = "${var.project_name}-alb-sg"
   }
 }
-
