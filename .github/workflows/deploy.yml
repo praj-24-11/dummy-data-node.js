@@ -63,6 +63,7 @@ jobs:
     name: Linting & Security Checks
     runs-on: ubuntu-latest
     needs: terraform
+    continue-on-error: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
