@@ -21,7 +21,6 @@ resource "aws_lb" "api_alb" {
   subnets           = var.public_subnet_ids
 
   enable_deletion_protection = false
-  ssl_policy = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
   access_logs {
     bucket  = aws_s3_bucket.alb_logs.bucket  # Reference the S3 bucket created above
@@ -78,7 +77,7 @@ resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.api_alb.arn
   port              = 80
   protocol          = "HTTP"
-
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   default_action {
     type = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
