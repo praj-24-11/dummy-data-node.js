@@ -1,3 +1,18 @@
+# Create an S3 bucket for access logs
+resource "aws_s3_bucket" "alb_logs" {
+  bucket = "alb-logs"
+  acl    = "private"
+
+  versioning {
+    enabled = true
+  }
+
+  tags = {
+    Name        = "ALB Access Logs"
+    Environment = "Production"
+  }
+}
+
 resource "aws_lb" "api_alb" {
   name               = "${var.project_name}-alb"
   internal           = false
@@ -6,6 +21,13 @@ resource "aws_lb" "api_alb" {
   subnets           = var.public_subnet_ids
 
   enable_deletion_protection = false
+  ssl_policy = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+
+  access_logs {
+    bucket  = aws_s3_bucket.alb_logs.bucket  # Reference the S3 bucket created above
+    enabled = true
+    prefix  = "access-logs"  # Optional: specify a prefix for log files in the bucket
+  }
 
   tags = {
     Name = "${var.project_name}-alb"
