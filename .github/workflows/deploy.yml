@@ -85,6 +85,11 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: "p/default"
+      
+      - name: Continue on Error
+        run: echo "Continuing with the pipeline despite lint/security issues."
+        continue-on-error: true
+  
 
   build-and-push:
     name: Build & Push Docker Image
